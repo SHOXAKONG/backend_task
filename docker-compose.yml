@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    container_name: nevel_web
+    entrypoint: /code/entrypoints.sh
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+      - ./static:/code/static
+    env_file:
+      - .env
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
