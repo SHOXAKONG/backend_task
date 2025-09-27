@@ -2,9 +2,9 @@ from . import views
 from rest_framework.routers import DefaultRouter
 from django.urls import include, path
 
-
 router = DefaultRouter()
 router.register('auth-methods', views.AuthUserViewSet, 'auth')
+router.register('users-control', views.AdminUserViewSet, 'users-control')
 
 urlpatterns = [
     path('', include(router.urls)),

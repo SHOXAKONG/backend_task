@@ -6,7 +6,8 @@ from .serializers import (
     GoogleAuthSerializer,
     SetPasswordSerializer,
     LoginSerializer,
-    RefreshTokenSerializer
+    RefreshTokenSerializer,
+    UserListSerializer
 
 )
 
@@ -18,5 +19,6 @@ serializer_action_classes = {
     "google": GoogleAuthSerializer,
     "set_password": SetPasswordSerializer,
     "login": LoginSerializer,
-    "token_refresh": RefreshTokenSerializer
+    "token_refresh": RefreshTokenSerializer,
+    "users_list": UserListSerializer
 }

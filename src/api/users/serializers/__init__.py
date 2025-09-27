@@ -10,6 +10,7 @@ from .auth import (
     RefreshTokenSerializer,
 )
 from .users import UserSerializer
+from .admin import UserListSerializer
 
 __all__ = (
     "BaseUserSerializer",
@@ -20,5 +21,6 @@ __all__ = (
     "RestorePasswordSerializer",
     "GoogleAuthSerializer",
     "SetPasswordSerializer",
-    "LoginSerializer"
+    "LoginSerializer",
+    "UserListSerializer"
 )
