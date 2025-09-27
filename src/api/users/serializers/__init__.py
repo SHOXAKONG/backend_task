@@ -3,7 +3,11 @@ from .auth import (
     UserRegisterSerializer,
     AuthForgotPasswordSerializer,
     ConfirmCodeSerializer,
-    RestorePasswordSerializer
+    RestorePasswordSerializer,
+    GoogleAuthSerializer,
+    SetPasswordSerializer,
+    LoginSerializer,
+    RefreshTokenSerializer,
 )
 from .users import UserSerializer
 
@@ -13,5 +17,8 @@ __all__ = (
     "UserSerializer",
     "AuthForgotPasswordSerializer",
     "ConfirmCodeSerializer",
-    "RestorePasswordSerializer"
+    "RestorePasswordSerializer",
+    "GoogleAuthSerializer",
+    "SetPasswordSerializer",
+    "LoginSerializer"
 )

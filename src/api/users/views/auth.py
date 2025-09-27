@@ -1,35 +1,25 @@
 from django.contrib.auth import logout
-from rest_framework import viewsets, status
+from drf_spectacular.utils import extend_schema
+from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from src.api.users.serializers import (
-    UserRegisterSerializer,
-    UserSerializer,
-    AuthForgotPasswordSerializer,
-    ConfirmCodeSerializer,
-    RestorePasswordSerializer
-)
+from src.api.users.serializers import UserSerializer
+from ..actions import serializer_action_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 from src.apps.users.models import User
 from src.apps.users.task import send_html_email_task
 
 
+@extend_schema(tags=["Auth"])
 class AuthUserViewSet(viewsets.GenericViewSet):
     queryset = None
     lookup_field = "id"
     lookup_value_regex = "[0-9a-f-]{36}"
+    serializer_class = serializers.Serializer
 
     def get_serializer_class(self):
-        if self.action in ['register']:
-            return UserRegisterSerializer
-        elif self.action in ['forgot_password']:
-            return AuthForgotPasswordSerializer
-        elif self.action in ['confirm_code']:
-            return ConfirmCodeSerializer
-        elif self.action in ['restore_password']:
-            return RestorePasswordSerializer
-        return super().get_serializer_class()
+        return serializer_action_classes.get(self.action, super().get_serializer_class())
 
     def get_permissions(self):
         if self.action in ['logout_view']:
@@ -90,5 +80,46 @@ class AuthUserViewSet(viewsets.GenericViewSet):
             "refresh": str(refresh)
         }, status=status.HTTP_200_OK)
 
+    @action(methods=["post"], detail=False, url_path="google")
+    def google(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        claims = serializer.validated_data["claims"]
 
+        user, _ = User.objects.get_or_create(
+            email=claims["email"],
+            defaults={
+                "first_name": claims.get("given_name", ""),
+                "last_name": claims.get("family_name", ""),
+            },
+        )
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "user": UserSerializer(user).data,
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+        }, status=status.HTTP_200_OK)
 
+    @action(methods=['put'], detail=True, url_path='set-password')
+    def set_password(self, request, id=None):
+        user = User.objects.filter(id=id).first()
+        if not user:
+            return Response({"detail": "User not Found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save(user=user)
+        return Response({
+            "user": UserSerializer(user).data
+        }, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=False, url_path='login')
+    def login(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=False, url_path='login/token-refresh')
+    def token_refresh(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
