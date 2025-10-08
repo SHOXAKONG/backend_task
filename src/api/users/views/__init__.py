@@ -1,7 +1,9 @@
 from .auth import AuthUserViewSet
-from .users import AdminUserViewSet
+from .admin import AdminUserViewSet
+from .users import ClientUserViewSet
 
 __all__ = {
     "AuthUserViewSet",
-    "AdminUserViewSet"
+    "AdminUserViewSet",
+    "ClientUserViewSet"
 }

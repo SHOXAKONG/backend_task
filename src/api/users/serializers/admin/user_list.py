@@ -9,7 +9,8 @@ class UserListSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id',
-            "full_name",
+            "first_name",
+            "last_name",
             'email',
             'is_active',
             'is_staff',

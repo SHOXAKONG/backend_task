@@ -5,6 +5,7 @@ from django.urls import include, path
 router = DefaultRouter()
 router.register('auth-methods', views.AuthUserViewSet, 'auth')
 router.register('users-control', views.AdminUserViewSet, 'users-control')
+router.register('client', views.ClientUserViewSet, 'client')
 
 urlpatterns = [
     path('', include(router.urls)),

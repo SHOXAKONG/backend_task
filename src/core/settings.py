@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'src.apps.notification',
     'src.apps.payment',
     'src.apps.common',
+    'src.apps.card',
 ]
 SITE_ID = 1
 
@@ -158,6 +159,8 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_PAGINATION_CLASS": "src.apps.common.pagination.CustomPagination",
+    "PAGE_SIZE": 10,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
@@ -253,4 +256,5 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Payment System',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    "PAGINATION_COMPONENT_NAME": "src.apps.common.pagination.CustomPagination",
 }
